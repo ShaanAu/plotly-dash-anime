@@ -50,8 +50,7 @@ top_20 = genre_count.nlargest(20, 'count')
 top_10 = genre_count.nlargest(10, 'count')
 top_5 = genre_count.nlargest(5, 'count')
 
-labels = top_20["genre"]
-values = top_20["count"]
+
 figure_bar = px.bar(top_20, x='genre', y='count')
 
 fig_box = px.box(anime_df, x="type", y="rating")
@@ -68,6 +67,7 @@ app = dash.Dash(__name__,
 #############################################div for main bar#####################################################
 
 app.layout = html.Div([
+###############################Div for header####################################################################
 html.Div([
     html.Div([
         html.H1("Anime Dashboard",
@@ -83,6 +83,7 @@ html.Div([
 ],
     className="row header",
     style={'background-image': 'url(/assets/test1.jpeg)','justify-content': 'center', 'align-items': 'center','display': 'flex'}),
+
 
      html.Div([
         html.Div([
@@ -100,33 +101,57 @@ html.Div([
                 },
                 value=5,
             )
-        ], className= "one column", style={'margin-top':"100px"}),
+        ], className= "one column", style={'margin-top':"100px", 'margin-left':'75px'}),
+
+        html.Div([
+            dcc.Graph(id='bar')
+        ], className= "five columns"),
 
         html.Div([
             dcc.Graph(figure=fig_box)
-        ], className= "five columns"),
-        ],className='row')
+        ], className= "five columns")
 
+        ],className='row'),
 
+     html.Div([
+        
+        html.Div([
+            dcc.Graph(id = 'linreg')
+        ], className= 'six columns')
+        ])
 
     ])
 
 
-# @app.callback(
-#     Output('pie', 'figure'),
-#     [Input('slider','value')])
-# def update_graph(slider):
-#     if slider == 5:
-#         labels = top_5["genre"]
-#         values = top_5["count"]
-#     elif slider == 10:
-#         labels = top_10["genre"]
-#         values = top_10["count"]
-#     elif slider == 15:
-#         labels = top_20["genre"]
-#         values = top_20["count"]
-#     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.3)])
-#     dcc.Graph(figure=fig)
+@app.callback(
+    Output('bar', 'figure'),
+    [Input('slider','value')])
+def update_graph(slider):
+    if slider == 5:
+        figure_bar = px.bar(top_5, x='genre', y='count')
+    elif slider == 10:
+        figure_bar = px.bar(top_10, x='genre', y='count')
+    elif slider == 15:
+        figure_bar = px.bar(top_20, x='genre', y='count')
+
+    return figure_bar
+
+@app.callback(
+    Output('pie', 'figure'),
+    [Input('slider','value')])
+def update_graph(slider):
+    if slider == 5:
+        figure_bar = px.bar(top_5, x='genre', y='count')
+    elif slider == 10:
+        figure_bar = px.bar(top_10, x='genre', y='count')
+    elif slider == 15:
+        figure_bar = px.bar(top_20, x='genre', y='count')
+
+    return figure_bar
+
+
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
