@@ -81,79 +81,217 @@ app = dash.Dash(__name__,
                 )
 
 #############################################div for main bar#####################################################
+app.layout = html.Div(
+            className="content",
+            children=[
 
-app.layout = html.Div([
-###############################Div for header####################################################################
-html.Div([
-    html.Div([
-        html.H1("Anime Dashboard",
-            style={ "font-family": "Helvetica",
-                    "fontSize":90,
-                    "color":"orange",})
-
-
-    ],
-        className='six columns',
-        style={"display":"inline-block"})
-
-],
-    className="row header",
-    style={'background-image': 'url(/assets/test1.jpeg)','justify-content': 'center', 'align-items': 'center','display': 'flex'}),
-
-
-     html.Div([
-        html.Div([
+html.Div(
+    className="left_menu",
+    children=[
+        html.Div(
             dcc.Slider(
-                id = 'slider',
-                min=5,
-                max=15,
+                min=0,
+                max=10,
                 step=None,
-                verticalHeight=200,
-                vertical=True,
                 marks={
-                    5: 'Top 5',
-                    10: 'Top 10',
-                    15: 'Top 20',
+                    0: '0 °F',
+                    3: '3 °F',
+                    5: '5 °F',
+                    7.65: '7.65 °F',
+                    10: '10 °F'
                 },
-                value=5,
-            )
-        ], className= "one column", style={'margin-top':"100px", 'margin-left':'75px'}),
-
-        html.Div([
-            dcc.Graph(id='bar')
-        ], className= "five columns"),
-
-        html.Div([
-            dcc.Graph(figure=fig_box)
-        ], className= "five columns")
-
-        ],className='row'),
+                value=5
+            ),
+        ),
+    ]
+),
 
 
-    html.Div([
-        html.Div([
-            dcc.Graph(figure=figure_heatmap)
+html.Div(
+    className="left_menu_2",
+    children=[
+        html.Div(
+            dcc.Slider(
+                min=0,
+                max=10,
+                step=None,
+                marks={
+                    1: '10 °F',
+                    3: '3 °F',
+                    5: '5 °F',
+                    6: '7.65 °F',
+                    10: '10 °F'
+                },
+                value=5
+            ),
+        ),
+    ]
+),
 
-        ], className='four columns')
+html.Div(
+    className="right_content",
+    children=[
+        html.Div(
+            className="top_metrics",
+            children=[
+                html.Div([
+                    html.H1("Anime Dashboard",
+                    style={ "font-family": "Helvetica",
+                            "fontSize":90,
+                            "color":"orange",
+                            'background-image': 'url(/assets/test1.jpeg)',
+                            'justify-content': 'center',
+                            'align-items': 'center',
+                            'display': 'flex'})
+                ]),
+                html.Div(
+                    'This down top metrics'
+                ),
+            ]
+        ),
 
+    ]
+),
 
-    ], className='row')
+html.Div(
+    className="top_metrics_50",
+    children=[
+        html.Div(
+            dcc.Slider(
+                min=0,
+                max=10,
+                step=None,
+                marks={
+                    1: '10 °F',
+                    3: '3 °F',
+                    5: '5 °F',
+                    6: '7.65 °F',
+                    10: '10 °F'
+                },
+                value=5
+            ),
+        ),
+    ]
+),
+
+html.Div(
+    className="left_side",
+    children=[
+        html.Div(
+            dcc.Slider(
+                min=0,
+                max=10,
+                step=None,
+                marks={
+                    1: '10 °F',
+                    3: '3 °F',
+                    5: '5 °F',
+                    6: '7.65 °F',
+                    10: '10 °F'
+                },
+                value=5
+            ),
+        ),
+    ]
+),
+
 
     ])
 
+if __name__ == '__main__':
+    app.run_server(debug=True)
 
-@app.callback(
-    Output('bar', 'figure'),
-    [Input('slider','value')])
-def update_graph(slider):
-    if slider == 5:
-        figure_bar = px.bar(top_5, x='genre', y='count')
-    elif slider == 10:
-        figure_bar = px.bar(top_10, x='genre', y='count')
-    elif slider == 15:
-        figure_bar = px.bar(top_20, x='genre', y='count')
 
-    return figure_bar
+
+
+
+
+# app.layout = html.Div([
+# ###############################Div for header####################################################################
+# html.Div([
+#     html.Div([
+#         html.H1("Anime Dashboard",
+#             style={ "font-family": "Helvetica",
+#                     "fontSize":90,
+#                     "color":"orange",})
+#
+#
+#     ],
+#         className='six columns',
+#         style={"display":"inline-block"})
+#
+# ],
+#     className="row header",
+#     style={'background-image': 'url(/assets/test1.jpeg)','justify-content': 'center', 'align-items': 'center','display': 'flex'}),
+#
+#
+#      html.Div([
+#         html.Div([
+#             daq.Gauge(
+#                 id='my-gauge',
+#                 color={"gradient":True,"ranges":{"yellow":[0,5],"orange":[5,7],"red":[7,10]}},
+#                 label="Default",
+#                 value=5
+#              ),
+#             dcc.Slider(
+#                 id = 'slider',
+#                 min=5,
+#                 max=15,
+#                 step=None,
+#                 verticalHeight=200,
+#                 vertical=True,
+#                 marks={
+#                     5: 'Top 5',
+#                     10: 'Top 10',
+#                     15: 'Top 20',
+#                 },
+#                 value=5,
+#             )
+#         ], className= "left_menu"),
+#
+#         html.Div([
+#             dcc.Graph(id='bar')
+#         ], className= "left_menu"),
+#
+#         html.Div([
+#             dcc.Graph(figure=fig_box)
+#         ], className= "five columns")
+#
+#         ],className='row'),
+#
+#
+#     html.Div([
+#         html.Div([
+#             dcc.Graph(figure=figure_heatmap)
+#
+#         ], className='four columns')
+#
+#
+#     ], className='row')
+#
+#     ])
+#
+#
+# @app.callback(
+#     Output('bar', 'figure'),
+#     [Input('slider','value')])
+# def update_graph(slider):
+#     if slider == 5:
+#         figure_bar = px.bar(top_5, x='genre', y='count')
+#     elif slider == 10:
+#         figure_bar = px.bar(top_10, x='genre', y='count')
+#     elif slider == 15:
+#         figure_bar = px.bar(top_20, x='genre', y='count')
+#
+#     return figure_bar
+# #
+# @app.callback(
+#     dash.dependencies.Output('my-gauge', 'value'),
+#     [dash.dependencies.Input('slider', 'value')]
+# )
+# def update_output(value):
+#     return value
+#
 
 # @app.callback(
 #     Output('pie', 'figure'),
@@ -172,5 +310,5 @@ def update_graph(slider):
 
 
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# if __name__ == '__main__':
+#     app.run_server(debug=True)

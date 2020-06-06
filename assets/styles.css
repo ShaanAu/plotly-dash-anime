@@ -1,0 +1,76 @@
+.content{
+ width: 100%;
+ background: #F7F7F7;
+ }
+
+.right_content{
+ width:85%;
+ position:absolute;
+ top: 0;
+ right: 0;
+ }
+
+.right_content_2{
+ width:42.5%;
+ position:absolute;
+ top: 200px;
+ right: 200pox;
+ }
+
+.top_metrics {
+ background: #EAEAEA;
+ height: 0;
+ width:100%;
+ position:absolute;
+ top: 0;
+ right: 0;
+ }
+
+.top_metrics_50 {
+ background: #EAEAEA;
+ height: 0;
+ width:50%;
+ position:absolute;
+ top: 200px;
+ right: 0;
+ }
+
+.top_metrics_30 {
+ background: #EAEAEA;
+ height: 0;
+ width:30%;
+ position:absolute;
+ top: 200px;
+ right: 50%;
+ }
+
+.left_menu {
+ width: 15%;
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100vh;
+ z-index: 999;
+ background: #2A3F54;
+}
+
+
+.left_menu_2 {
+ width: 15%;
+ position: absolute;
+ top: 200px;
+ left: 0;
+ height: 100vh;
+ z-index: 999;
+ background: #2A3F54;
+}
+
+.left_side {
+ width: 34%;
+ margin-left: 15%;
+ position: absolute;
+ top: 200px;
+ left: 0;
+ height: 100vh;
+}
+
