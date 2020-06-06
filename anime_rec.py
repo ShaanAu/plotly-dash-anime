@@ -12,6 +12,8 @@ from dash.dependencies import Input, Output
 import base64
 import os
 
+os.chdir('/Users/shaanaucharagram/Documents/repos/plotly_dash_anime')
+
 # external JavaScript files
 external_scripts = [
     'https://www.google-analytics.com/analytics.js',
@@ -36,10 +38,16 @@ external_stylesheets = [
 
 
 
-path = '/Users/shaanaucharagram/Documents/repos/plotly_dash_anime'
-anime_df = pd.read_csv(path + "/data/anime.csv")
-rating_df = pd.read_csv(path + "/data/rating.csv")
-path = '/Users/shaanaucharagram/Documents/repos/plotly_dash_anime'
+path = '/Users/shaanaucharagram/Documents/repos'
+anime_df = pd.read_csv(path + "/big_data/anime.csv")
+rating_df = pd.read_csv(path + "/big_data/rating.csv")
+df = pd.get_dummies(anime_df, columns=['type'])
+df_anime_new = pd.merge(anime_df, df)
+df_anime_new_corr = df_anime_new.corr()
+
+rating_df['did_rate'] = np.where(rating_df['rating']!=-1, 1, 0)
+test_df = anime_df.merge(rating_df, on='anime_id', how='left')
+test_df['count'] = test_df['anime_id'].map(test_df['anime_id'].value_counts())
 
 genres = pd.DataFrame(anime_df.genre.str.split(',', expand=True).stack(), columns=['genre'])
 genres = genres.reset_index(drop=True)
@@ -54,6 +62,14 @@ top_5 = genre_count.nlargest(5, 'count')
 figure_bar = px.bar(top_20, x='genre', y='count')
 
 fig_box = px.box(anime_df, x="type", y="rating")
+
+
+figure_heatmap = go.Figure(data=go.Heatmap(
+        z=df_anime_new_corr,
+        x=df_anime_new_corr.columns,
+        y=df_anime_new_corr.columns,
+        colorscale='Viridis'))
+
 
 
 # image_filename = path + '/data/marker.png' # replace with your own image
@@ -113,12 +129,15 @@ html.Div([
 
         ],className='row'),
 
-     html.Div([
-        
+
+    html.Div([
         html.Div([
-            dcc.Graph(id = 'linreg')
-        ], className= 'six columns')
-        ])
+            dcc.Graph(figure=figure_heatmap)
+
+        ], className='four columns')
+
+
+    ], className='row')
 
     ])
 
@@ -136,18 +155,18 @@ def update_graph(slider):
 
     return figure_bar
 
-@app.callback(
-    Output('pie', 'figure'),
-    [Input('slider','value')])
-def update_graph(slider):
-    if slider == 5:
-        figure_bar = px.bar(top_5, x='genre', y='count')
-    elif slider == 10:
-        figure_bar = px.bar(top_10, x='genre', y='count')
-    elif slider == 15:
-        figure_bar = px.bar(top_20, x='genre', y='count')
-
-    return figure_bar
+# @app.callback(
+#     Output('pie', 'figure'),
+#     [Input('slider','value')])
+# def update_graph(slider):
+#     if slider == 5:
+#         figure_bar = px.bar(top_5, x='genre', y='count')
+#     elif slider == 10:
+#         figure_bar = px.bar(top_10, x='genre', y='count')
+#     elif slider == 15:
+#         figure_bar = px.bar(top_20, x='genre', y='count')
+#
+#     return figure_bar
 
 
 
