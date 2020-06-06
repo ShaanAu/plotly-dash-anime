@@ -52,6 +52,7 @@ top_5 = genre_count.nlargest(5, 'count')
 
 labels = top_20["genre"]
 values = top_20["count"]
+figure_bar = px.bar(top_20, x='genre', y='count')
 
 fig_box = px.box(anime_df, x="type", y="rating")
 
@@ -68,17 +69,6 @@ app = dash.Dash(__name__,
 
 app.layout = html.Div([
 html.Div([
-    # html.Div([
-    #     html.Img(
-    #         src = app.get_asset_url('testbaby.png'),
-    #         style={'height': '100px'},
-    #
-    #     )
-    #
-    # ],
-    #     className='four columns',
-    #     style={"display":"inline-block"}),
-
     html.Div([
         html.H1("Anime Dashboard",
             style={ "font-family": "Helvetica",
@@ -108,9 +98,10 @@ html.Div([
                     10: 'Top 10',
                     15: 'Top 20',
                 },
-                value=5
+                value=5,
             )
         ], className= "one column", style={'margin-top':"100px"}),
+
         html.Div([
             dcc.Graph(figure=fig_box)
         ], className= "five columns"),
