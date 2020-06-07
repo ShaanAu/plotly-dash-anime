@@ -89,19 +89,11 @@ html.Div(
     className="left_menu",
     children=[
         html.Div(
-            dcc.Slider(
-                min=0,
-                max=10,
-                step=None,
-                marks={
-                    0: '0 °F',
-                    3: '3 °F',
-                    5: '5 °F',
-                    7.65: '7.65 °F',
-                    10: '10 °F'
-                },
+            daq.Gauge(
+                color={"gradient":True,"ranges":{"yellow":[0,5],"orange":[5,7],"red":[7,10]}},
+                label="Default",
                 value=5
-            ),
+             ),
         ),
     ]
 ),
@@ -111,19 +103,18 @@ html.Div(
     className="left_menu_2",
     children=[
         html.Div(
-            dcc.Slider(
-                min=0,
-                max=10,
-                step=None,
-                marks={
-                    1: '10 °F',
-                    3: '3 °F',
-                    5: '5 °F',
-                    6: '7.65 °F',
-                    10: '10 °F'
-                },
-                value=5
+            daq.Gauge(
+                    id='my-gauge',
+                    label="Default",
+                    value=6
             ),
+        ),
+        dcc.Slider(
+            id='my-gauge-slider',
+            min=0,
+            max=10,
+            step=1,
+            value=5
         ),
     ]
 ),
@@ -178,25 +169,30 @@ html.Div(
     className="left_side",
     children=[
         html.Div(
-            dcc.Slider(
-                min=0,
-                max=10,
-                step=None,
-                marks={
-                    1: '10 °F',
-                    3: '3 °F',
-                    5: '5 °F',
-                    6: '7.65 °F',
-                    10: '10 °F'
-                },
-                value=5
-            ),
+            dcc.Graph(id='bar')
         ),
     ]
 ),
 
 
     ])
+
+@app.callback(
+    Output('bar', 'figure'),
+    [Input('my-gauge-slider','value')])
+def update_graph(slider):
+    top_n_bar = genre_count.nlargest(slider, 'count')
+    figure_bar = px.bar(top_n_bar, x='genre', y='count')
+
+
+    return figure_bar
+# #
+@app.callback(
+    dash.dependencies.Output('my-gauge', 'value'),
+    [dash.dependencies.Input('my-gauge-slider', 'value')]
+)
+def update_output(value):
+    return value
 
 if __name__ == '__main__':
     app.run_server(debug=True)
@@ -272,26 +268,23 @@ if __name__ == '__main__':
 #     ])
 #
 #
-# @app.callback(
-#     Output('bar', 'figure'),
-#     [Input('slider','value')])
-# def update_graph(slider):
-#     if slider == 5:
-#         figure_bar = px.bar(top_5, x='genre', y='count')
-#     elif slider == 10:
-#         figure_bar = px.bar(top_10, x='genre', y='count')
-#     elif slider == 15:
-#         figure_bar = px.bar(top_20, x='genre', y='count')
-#
-#     return figure_bar
+@app.callback(
+    Output('bar', 'figure'),
+    [Input('my-gauge-slider','value')])
+def update_graph(slider):
+    top_n_bar = genre_count.nlargest(slider, 'count')
+    figure_bar = px.bar(top_n_bar, x='genre', y='count')
+
+
+    return figure_bar
 # #
-# @app.callback(
-#     dash.dependencies.Output('my-gauge', 'value'),
-#     [dash.dependencies.Input('slider', 'value')]
-# )
-# def update_output(value):
-#     return value
-#
+@app.callback(
+    dash.dependencies.Output('my-gauge', 'value'),
+    [dash.dependencies.Input('my-gauge-slider', 'value')]
+)
+def update_output(value):
+    return value
+
 
 # @app.callback(
 #     Output('pie', 'figure'),

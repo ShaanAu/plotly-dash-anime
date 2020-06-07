@@ -71,6 +71,19 @@
  position: absolute;
  top: 200px;
  left: 0;
- height: 100vh;
+ height: 33vh;
+ border: solid;
 }
 
+.left_side td {
+  border: solid;
+  border-width: 0.2px;
+}
+
+.left_side tr:hover {
+  background-color: yellow;
+}
+
+.left_side td:hover {
+  background-color: red;
+}
