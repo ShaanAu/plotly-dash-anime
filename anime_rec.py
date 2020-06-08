@@ -71,6 +71,11 @@ figure_heatmap = go.Figure(data=go.Heatmap(
         colorscale='Viridis'))
 
 
+sound_filename = path + '/plotly_dash_anime/anime.mp3'  # replace with your own .mp3 file
+encoded_sound = base64.b64encode(open(sound_filename, 'rb').read())
+
+
+
 
 # image_filename = path + '/data/marker.png' # replace with your own image
 # encoded_image = base64.b64encode(open(image_filename, 'rb').read())
@@ -120,6 +125,21 @@ html.Div(
 ),
 
 html.Div(
+    className="left_menu_3",
+    children=[
+        html.Div(
+
+            html.Button(id="button1", children="Click me for sound")
+
+
+
+        ),
+        html.Div(id="placeholder", style={"display": "none"})
+    ]
+),
+
+
+html.Div(
     className="right_content",
     children=[
         html.Div(
@@ -136,13 +156,15 @@ html.Div(
                             'display': 'flex'})
                 ]),
                 html.Div(
-                    'This down top metrics'
+                    html.Button(id="button2", children="Click me for sound")
                 ),
             ]
         ),
 
     ]
 ),
+
+
 
 html.Div(
     className="top_metrics_50",
@@ -193,6 +215,19 @@ def update_graph(slider):
 )
 def update_output(value):
     return value
+
+@app.callback(Output("placeholder", "children"),
+              [Input("button1", "n_clicks")],
+)
+def play(n_clicks):
+    if n_clicks is None:
+        n_clicks = 0
+    if n_clicks != 0:
+        return html.Audio(src='data:audio/mpeg;base64,{}'.format(encoded_sound.decode()),
+                          controls=False,
+                          autoPlay=True,
+                          )
+        n_clicks = 0
 
 if __name__ == '__main__':
     app.run_server(debug=True)
