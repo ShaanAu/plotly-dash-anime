@@ -8,9 +8,11 @@ import dash_html_components as html
 import dash_daq as daq
 import plotly.graph_objects as go
 import plotly.express as px
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import base64
 import os
+import statsmodels
 
 os.chdir('/Users/shaanaucharagram/Documents/repos/plotly_dash_anime')
 
@@ -36,6 +38,45 @@ external_stylesheets = [
     }
 ]
 
+email_input = html.Div(
+    [
+        dbc.FormGroup(
+            [
+                dbc.Label("Email"),
+                dbc.Input(id="email-input", type="email", value=""),
+                dbc.FormText("We only accept gmail..."),
+                dbc.FormFeedback(
+                    "That looks like a gmail address :-)", valid=True
+                ),
+                dbc.FormFeedback(
+                    "Sorry, we only accept gmail for some reason...",
+                    valid=False,
+                ),
+            ]
+        )
+    ]
+)
+
+form = dbc.Form(
+    [
+        dbc.FormGroup(
+            [
+                dbc.Label("Email", className="mr-2"),
+                dbc.Input(type="email", placeholder="Enter email"),
+            ],
+            className="mr-3",
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Label("Password", className="mr-2"),
+                dbc.Input(type="password", placeholder="Enter password"),
+            ],
+            className="mr-3",
+        ),
+        dbc.Button("Submit", color="primary"),
+    ],
+    inline=True,
+)
 
 
 path = '/Users/shaanaucharagram/Documents/repos'
@@ -62,6 +103,21 @@ top_5 = genre_count.nlargest(5, 'count')
 figure_bar = px.bar(top_20, x='genre', y='count')
 
 fig_box = px.box(anime_df, x="type", y="rating")
+
+
+df_anime_new['episodes'] = df_anime_new.episodes.fillna(0)
+df_anime_new.episodes.replace(('Unknown'), (0), inplace=True)
+df_anime_new['episodes'] = df_anime_new.episodes.astype(int)
+df_anime_new['episodes']=df_anime_new['episodes'].replace(0,df_anime_new['episodes'].mean())
+
+
+for column in ['type','rating']:
+    df_anime_new[column].fillna(df_anime_new[column].mode()[0], inplace=True)
+
+
+
+
+figure_trendlines = px.scatter(df_anime_new, x="episodes", y="rating",trendline="ols")
 
 
 figure_heatmap = go.Figure(data=go.Heatmap(
@@ -143,7 +199,7 @@ html.Div(
     className="right_content",
     children=[
         html.Div(
-            className="top_metrics",
+            className="header",
             children=[
                 html.Div([
                     html.H1("Anime Dashboard",
@@ -156,8 +212,11 @@ html.Div(
                             'display': 'flex'})
                 ]),
                 html.Div(
-                    html.Button(id="button2", children="Click me for sound")
-                ),
+                    className = 'six columns',
+                    children =[
+                     form
+                    ]
+                )
             ]
         ),
 
@@ -170,19 +229,9 @@ html.Div(
     className="top_metrics_50",
     children=[
         html.Div(
-            dcc.Slider(
-                min=0,
-                max=10,
-                step=None,
-                marks={
-                    1: '10 °F',
-                    3: '3 °F',
-                    5: '5 °F',
-                    6: '7.65 °F',
-                    10: '10 °F'
-                },
-                value=5
-            ),
+
+            dcc.Graph(figure=figure_trendlines)
+
         ),
     ]
 ),
@@ -228,6 +277,16 @@ def play(n_clicks):
                           autoPlay=True,
                           )
         n_clicks = 0
+
+# @app.callback(
+#     [Output("email-input", "valid"), Output("email-input", "invalid")],
+#     [Input("email-input", "value")],
+# )
+# def check_validity(text):
+#     if text:
+#         is_gmail = text.endswith("@gmail.com")
+#         return is_gmail, not is_gmail
+#     return False, False
 
 if __name__ == '__main__':
     app.run_server(debug=True)

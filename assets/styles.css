@@ -11,16 +11,14 @@
  }
 
 .top_metrics {
- background: #EAEAEA;
  height: 0;
- width:100%;
+ width:85%;
  position:absolute;
  top: 0;
  right: 0;
  }
 
 .top_metrics_50 {
- background: #EAEAEA;
  height: 0;
  width:50%;
  position:absolute;
@@ -30,7 +28,6 @@
  }
 
 .top_metrics_30 {
- background: #EAEAEA;
  height: 0;
  width:30%;
  position:absolute;
@@ -39,6 +36,8 @@
  }
 
 .left_menu {
+ margin: auto;
+ text-align: center;
  width: 15%;
  position: absolute;
  top: 0;
@@ -50,6 +49,8 @@
 
 
 .left_menu_2 {
+ margin: auto;
+ text-align: center;
  width: 15%;
  position: absolute;
  top: 200px;
@@ -60,6 +61,8 @@
 }
 
 .left_menu_3 {
+ margin: auto;
+ text-align: center;
  width: 15%;
  position: absolute;
  top: 600px;
@@ -79,4 +82,16 @@
  border: solid;
 }
 
+.card-text {
+  color: #999999;
+  margin-bottom: 7.5px;
+  display: block;
+}
+
+.card-title {
+  font-weight: bold;
+  font-size: 36px;
+  margin-top: 0;
+  margin-bottom: 7.5px;
+}
 
