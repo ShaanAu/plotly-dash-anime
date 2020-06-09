@@ -166,16 +166,18 @@ html.Div(
         html.Div(
             daq.Gauge(
                     id='my-gauge',
+                    color={"gradient":True,"ranges":{"yellow":[0,20],"orange":[20,40],"red":[40,50]}},
                     label="Default",
-                    value=6
+                    value=15,
+                    max=50
             ),
         ),
         dcc.Slider(
             id='my-gauge-slider',
-            min=0,
-            max=10,
+            min=1,
+            max=50,
             step=1,
-            value=5
+            value=15
         ),
     ]
 ),
