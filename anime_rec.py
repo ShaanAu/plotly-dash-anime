@@ -211,12 +211,6 @@ html.Div(
                             'align-items': 'center',
                             'display': 'flex'})
                 ]),
-                html.Div(
-                    className = 'six columns',
-                    children =[
-                     form
-                    ]
-                )
             ]
         ),
 
@@ -244,6 +238,17 @@ html.Div(
         ),
     ]
 ),
+
+
+html.Div(
+    className="left_side_2",
+    children=[
+        html.Div(
+            dcc.Graph(figure=figure_heatmap)
+        ),
+    ]
+),
+
 
 
     ])

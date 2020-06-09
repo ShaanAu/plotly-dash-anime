@@ -82,6 +82,17 @@
  border: solid;
 }
 
+
+.left_side_2 {
+ width: 34%;
+ margin-left: 15%;
+ position: absolute;
+ top: 650px;
+ left: 0;
+ height: 33vh;
+ border: solid;
+}
+
 .card-text {
   color: #999999;
   margin-bottom: 7.5px;
