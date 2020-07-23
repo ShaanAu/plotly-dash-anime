@@ -1,9 +1,8 @@
+# import packages and libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-#matplotlib.use('TkAgg')
-plt.interactive(False)
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -19,86 +18,78 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.cluster import KMeans
 
-class MakeModel:
-
-    def __init__(self, X, y, data):
-        self.X = X
-        self.y = y
-        self.data = data
-
-    def logisticRegression(self, scale=True, confusion_Matrix=False, Metrics=False, roc_Curve=False):
-        """
-        Creates a logistic regression model
-        """
-        X= self.X
-        y = self.y
-        X_convert = X
-        y_convert = y
-        X_train, X_test, y_train, y_test = train_test_split(X_convert, y_convert, stratify=y_convert, test_size=0.3, random_state=42)
-        # fit the model with data
-        if scale is True:
-            sc = StandardScaler()
-            X_train = sc.fit_transform(X_train)
-            X_test = sc.transform(X_test)
-
-        lr = LogisticRegression()
-        lr.fit(X_train, y_train)
-        y_pred = lr.predict(X_test)
-        #print(y_pred)
-
-        if confusion_Matrix is True:
-
-            cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
-
-            class_names = [0, 1]  # name  of classes
-            fig, ax = plt.subplots()
-            tick_marks = np.arange(len(class_names))
-            plt.xticks(tick_marks, class_names)
-            plt.yticks(tick_marks, class_names)
-
-            # create heatmap
-            h_map = sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
-            ax.xaxis.set_label_position("top")
-            plt.tight_layout()
-            plt.title('Confusion matrix', y=1.1)
-            plt.ylabel('Actual label')
-            plt.xlabel('Predicted label')
-            plt.show()
-
-        if Metrics is True:
-            print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-            print("Precision:", metrics.precision_score(y_test, y_pred))
-            print("Recall:", metrics.recall_score(y_test, y_pred))
-
-        if roc_Curve is True:
-            y_pred_proba = lr.predict_proba(X_test)[::, 1]
-            fpr, tpr, _ = metrics.roc_curve(y_test, y_pred_proba)
-            auc = metrics.roc_auc_score(y_test, y_pred_proba)
-            plt.plot(fpr, tpr, label="data 1, auc=" + str(auc))
-            plt.legend(loc=4)
-            plt.show()
-
-
 path = '/Users/shaanaucharagram/Documents/repos'
 anime_df = pd.read_csv(path + "/big_data/anime.csv")
-df = pd.get_dummies(anime_df, columns=['type'])
-df_anime_new
+rating_df = pd.read_csv(path + "/big_data/rating.csv")
+df = pd.get_dummies(anime_df)
+df_anime_new = pd.merge(anime_df, df)
+df_anime_new_corr = df_anime_new.corr()
 
-anime_df.type.value_counts()
+rating_df['did_rate'] = np.where(rating_df['rating']!=-1, 1, 0)
+test_df = anime_df.merge(rating_df, on='anime_id', how='left')
+test_df['count'] = test_df['anime_id'].map(test_df['anime_id'].value_counts())
 
-import seaborn as sns
+genres = pd.DataFrame(anime_df.genre.str.split(',', expand=True).stack(), columns=['genre'])
+genres = genres.reset_index(drop=True)
+genre_count = pd.DataFrame(genres.groupby(by=['genre']).size(), columns=['count'])
+genre_count = genre_count.reset_index()
 
-sns.heatmap(df_anime_new.corr())
+top_20 = genre_count.nlargest(20, 'count')
+top_10 = genre_count.nlargest(10, 'count')
+top_5 = genre_count.nlargest(5, 'count')
+
+df_anime_new['episodes'] = df_anime_new.episodes.fillna(0)
+df_anime_new.episodes.replace(('Unknown'), (0), inplace=True)
+df_anime_new['episodes'] = df_anime_new.episodes.astype(int)
+df_anime_new['episodes']=df_anime_new['episodes'].replace(0,df_anime_new['episodes'].mean())
+
+df_anime_new = df_anime_new[df['rating'].notna()]
+
+feature_list = list(df_anime_new.columns)
+feature_list = ['episodes', 'members']
 
 
-X = df_anime_new[['rating', '']]
-y = s
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
 
-lr = LogisticRegression()
-lr.fit(X_train, y_train)
-y_pred = lr.predict(X_test)
+X = df_anime_new[['episodes', 'members']]
+y = df_anime_new.rating
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+
+print('Training Features Shape:', X_train.shape)
+print('Training Labels Shape:', y_train.shape)
+print('Testing Features Shape:', X_test.shape)
+print('Testing Labels Shape:', y_test.shape)
+
+# Import the model we are using
+from sklearn.ensemble import RandomForestRegressor
+# Instantiate model with 1000 decision trees
+rf = RandomForestRegressor(n_estimators = 1000, random_state = 42)
+# Train the model on training data
+rf.fit(X_train, y_train)
+
+
+# Use the forest's predict method on the test data
+predictions = rf.predict(X_test)
+# Calculate the absolute errors
+errors = abs(predictions - y_test)
+# Print out the mean absolute error (mae)
+print('Mean Absolute Error:', round(np.mean(errors), 2), 'degrees.')
+
+# Calculate mean absolute percentage error (MAPE)
+mape = 100 * (errors / y_test)
+# Calculate and display accuracy
+accuracy = 100 - np.mean(mape)
+print('Accuracy:', round(accuracy, 2), '%.')
+
+
+# Get numerical feature importances
+importances = list(rf.feature_importances_)
+# List of tuples with variable and importance
+feature_importances = [(feature, round(importance, 2)) for feature, importance in zip(feature_list, importances)]
+# Sort the feature importances by most important first
+feature_importances = sorted(feature_importances, key = lambda x: x[1], reverse = True)
+# Print out the feature and importances
+[print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances];
+
+
